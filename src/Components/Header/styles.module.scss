@@ -1,20 +1,20 @@
-.headerContainer{
+.headerContainer {
   height: 5rem;
-  border-bottom: 1px solid var(--gray-800)
+  border-bottom: 1px solid var(--gray-800);
 }
 
-.HeaderContent{
+.HeaderContent {
   max-width: 1120px;
   height: 5rem;
   margin: 0 auto;
   padding: 0 2rem;
   display: flex;
   align-items: center;
-  nav{
+  nav {
     margin-left: 5rem;
     height: 5rem;
-    a{
-      display:inline-block;
+    a {
+      display: inline-block;
       position: relative;
       padding: 0 0.5rem;
       height: 5rem;
@@ -22,13 +22,13 @@
       color: var(--gray-300);
 
       transition: color 0.2s;
-      &+ a{
+      & + a {
         margin-left: 2rem;
       }
-      &:hover{
-        color: var(--white)
+      &:hover {
+        color: var(--white);
       }
-      &.active{
+      &.active {
         color: var(--white);
         font-weight: bold;
       }
@@ -40,8 +40,11 @@
         position: absolute;
         bottom: 1px;
         left: 0;
-        background:var(--yellow-500)
+        background: var(--yellow-500);
       }
     }
+  }
+  button {
+    margin-left: auto;
   }
 }
