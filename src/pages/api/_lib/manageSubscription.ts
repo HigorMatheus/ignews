@@ -8,7 +8,7 @@ export async function saveSubscription(
   createAction = false
 ) {
 
-  console.log('saveSubscription');
+
   const userRef = await fauna.query(
     q.Select(
       "ref",
@@ -20,10 +20,10 @@ export async function saveSubscription(
       )
     )
   );
-  console.log('criando userRef',userRef );
+
 
   const subscription = await stripe.subscriptions.retrieve(subscriptionId);
-  console.log('criando stripe',subscription);
+
   const subscriptionData = {
     id: subscription.id,
     userId: userRef,
@@ -32,7 +32,6 @@ export async function saveSubscription(
   }
 
   if(createAction){
-    console.log('criando',subscriptionData);
 
     await fauna.query(
       q.Create(
@@ -41,7 +40,6 @@ export async function saveSubscription(
       )
     );
   } else {
-    console.log('alterando');
     await fauna.query(
       q.Replace(
         q.Select(
