@@ -1,11 +1,25 @@
-import { GetStaticProps } from 'next'
-import  Head  from 'next/head'
-import React from 'react'
-import Prismic from '@prismicio/client'
-import { getPrismicClient } from '../../services/prismic'
-import styles from './post.module.scss'
+import { GetStaticProps } from 'next';
+import Head from 'next/head';
+import React from 'react';
+import Prismic from '@prismicio/client';
+import { RichText } from 'prismic-dom';
+import Link from 'next/link';
 
-export default function Posts(){
+import { getPrismicClient } from '../../services/prismic';
+import styles from './posts.module.scss';
+
+type Post = {
+  slug: string;
+  title: string;
+  excerpt: string;
+  updatedAt: string;
+};
+
+interface PostProps {
+  posts: Array<Post>;
+}
+
+export default function Posts({ posts }: PostProps) {
   return (
     <>
       <Head>
@@ -14,105 +28,53 @@ export default function Posts(){
 
       <main className={styles.container}>
         <div className={styles.posts}>
-          <a href="">
-            <time>12 de marco de 2021</time>
-            <strong>create ner</strong>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Magnam fugit blanditiis quo sed aliquam? Molestiae nulla ipsam dolore reprehenderit laborum optio quisquam id cupiditate voluptatum, reiciendis, labore at, recusandae beatae?</p>
-          </a>
-          <a href="">
-            <time>12 de marco de 2021</time>
-            <strong>create ner</strong>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Magnam fugit blanditiis quo sed aliquam? Molestiae nulla ipsam dolore reprehenderit laborum optio quisquam id cupiditate voluptatum, reiciendis, labore at, recusandae beatae?</p>
-          </a>
-          <a href="">
-            <time>12 de marco de 2021</time>
-            <strong>create ner</strong>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Magnam fugit blanditiis quo sed aliquam? Molestiae nulla ipsam dolore reprehenderit laborum optio quisquam id cupiditate voluptatum, reiciendis, labore at, recusandae beatae?</p>
-          </a>
-          <a href="">
-            <time>12 de marco de 2021</time>
-            <strong>create ner</strong>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Magnam fugit blanditiis quo sed aliquam? Molestiae nulla ipsam dolore reprehenderit laborum optio quisquam id cupiditate voluptatum, reiciendis, labore at, recusandae beatae?</p>
-          </a>
+          {posts.map(post => (
+            <Link href={`posts/${post.slug}`}>
+              <a key={post.slug}>
+                <time>{post.updatedAt}</time>
+                <strong>{post.title}</strong>
+                <p>{post.excerpt}</p>
+              </a>
+            </Link>
+          ))}
         </div>
       </main>
     </>
-  )
+  );
 }
 
-export const getStaticProps: GetStaticProps= async ()=>{
-
-  const prismic = getPrismicClient()
+export const getStaticProps: GetStaticProps = async () => {
+  const prismic = getPrismicClient();
 
   const response = await prismic.query(
-  [Prismic.predicates.at('document.type','post')],{
-    fetch:['post.title', 'post.content'],
-    pageSize:100
-  }
-  )
+    [Prismic.predicates.at('document.type', 'post')],
+    {
+      fetch: ['post.title', 'post.content'],
+      pageSize: 100,
+    },
+  );
 
-  console.log(response);
+  const posts = response.results.map(post => {
+    return {
+      slug: post.uid,
+      title: RichText.asText(post.data.title),
+      excerpt:
+        post.data.content.find(content => content.type === 'paragraph')?.text ??
+        '',
+      updatedAt: new Date(post.last_publication_date).toLocaleDateString(
+        'pt-BR',
+        {
+          day: '2-digit',
+          month: 'long',
+          year: 'numeric',
+        },
+      ),
+    };
+  });
 
   return {
-    props:{}
-  }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    props: {
+      posts,
+    },
+  };
+};
