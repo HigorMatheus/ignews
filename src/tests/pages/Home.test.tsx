@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
-import { stripe } from '../services/stripe';
-import Home, { getStaticProps } from '../pages/index';
+import { stripe } from '../../services/stripe';
+import Home, { getStaticProps } from '../../pages/index';
 import { mocked } from 'ts-jest/utils';
 
 jest.mock('next-auth/client', () => {
@@ -11,7 +11,7 @@ jest.mock('next-auth/client', () => {
   };
 });
 jest.mock('next/router');
-jest.mock('../services/stripe');
+jest.mock('../../services/stripe');
 
 describe('@testing-library/', () => {
   it('renders correctly', () => {
@@ -26,7 +26,6 @@ describe('@testing-library/', () => {
       unit_amount: 1000,
     } as any);
     const response = await getStaticProps({});
-    console.log(response);
 
     expect(response).toEqual(
       expect.objectContaining({
