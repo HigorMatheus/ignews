@@ -9,7 +9,7 @@ export function SubscribeButton() {
   const router = useRouter();
   async function handleSubscribe() {
     if (!session) {
-      signIn('github');
+      signIn('github', { callbackUrl: 'post' });
       return;
     }
     if (session?.activeSubscription) {
